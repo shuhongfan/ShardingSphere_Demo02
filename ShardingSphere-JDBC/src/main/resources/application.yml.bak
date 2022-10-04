@@ -1,0 +1,65 @@
+spring:
+  application:
+    # 应用名称  读写分离
+    name: sharging-jdbc-demo
+  profiles:
+    # 开发环境设置
+    active: dev
+  shardingsphere:
+    datasource:
+      # 配置真实数据源
+      names: master,slave1,slave2
+
+      # 配置第 1 个数据源
+      master:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.120.20:3306/db_user
+        password: 123456
+        type: com.zaxxer.hikari.HikariDataSource
+        username: root
+
+      # 配置第 2 个数据源
+      slave1:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.120.20:3307/db_user
+        password: 123456
+        type: com.zaxxer.hikari.HikariDataSource
+        username: root
+
+      # 配置第 3 个数据源
+      slave2:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.120.20:3308/db_user
+        password: 123456
+        type: com.zaxxer.hikari.HikariDataSource
+        username: root
+    mode:
+      # 内存模式
+      type: Memory
+    props:
+      # 打印SQl
+      sql-show: true
+    rules:
+      readwrite-splitting:
+        data-sources:
+          myds:
+            # 负载均衡算法名称
+            load-balancer-name: alg_weight
+            props:
+              # 读数据源名称，多个从数据源用逗号分隔
+              read-data-source-names: slave1,slave2
+              # 写数据源名称
+              write-data-source-name: master
+            # 读写分离类型，如: Static，Dynamic
+            type: Static
+        load-balancers: # 负载均衡算法配置
+          # 负载均衡算法类型
+          alg_random:
+            type: RANDOM
+          alg_round:
+            type: ROUND_ROBIN
+          alg_weight:
+            props:
+              slave1: 1
+              slave2: 2
+            type: WEIGHT

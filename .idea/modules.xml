@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/ShardingSphere-JDBC/ShardingSphere-JDBC.iml" filepath="$PROJECT_DIR$/ShardingSphere-JDBC/ShardingSphere-JDBC.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ShardingSphere-Proxy/ShardingSphere-Proxy.iml" filepath="$PROJECT_DIR$/ShardingSphere-Proxy/ShardingSphere-Proxy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ShardingSphere_Demo02.iml" filepath="$PROJECT_DIR$/.idea/ShardingSphere_Demo02.iml" />
+      <module fileurl="file://$PROJECT_DIR$/atguigu/sharding-proxy-demo/sharding-proxy-demo.iml" filepath="$PROJECT_DIR$/atguigu/sharding-proxy-demo/sharding-proxy-demo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/atguigu/sharging-jdbc-demo/sharging-jdbc-demo.iml" filepath="$PROJECT_DIR$/atguigu/sharging-jdbc-demo/sharging-jdbc-demo.iml" />
+    </modules>
+  </component>
+</project>

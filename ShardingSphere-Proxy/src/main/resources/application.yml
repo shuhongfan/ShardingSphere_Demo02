@@ -1,0 +1,14 @@
+#mybatis??
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+spring:
+  application:
+    name: sharding-proxy-demo
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: root
+    url: jdbc:mysql://192.168.120.20:3321/readwrite_splitting_db?serverTimezone=GMT%2B8&useSSL=false
+    username: root
+  profiles:
+    active: dev

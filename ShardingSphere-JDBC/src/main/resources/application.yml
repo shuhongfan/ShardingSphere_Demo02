@@ -1,0 +1,130 @@
+spring:
+  application:
+    # 应用名称  垂直分片
+    name: sharging-jdbc-demo
+  profiles:
+    # 开发环境设置
+    active: dev
+  shardingsphere:
+    datasource:
+      # 配置真实数据源
+      names: server-user,server-order0,server-order1
+
+      # 配置第 1 个数据源
+      server-user:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.120.20:3301/db_user
+        password: 123456
+        type: com.zaxxer.hikari.HikariDataSource
+        username: root
+
+      # 配置第 2 个数据源
+      server-order0:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.120.20:3310/db_order
+        password: 123456
+        type: com.zaxxer.hikari.HikariDataSource
+        username: root
+
+      # 配置第 3 个数据源
+      server-order1:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://192.168.120.20:3311/db_order
+        password: 123456
+        type: com.zaxxer.hikari.HikariDataSource
+        username: root
+
+    mode:
+      # 内存模式
+      type: Memory
+
+    props:
+      # 打印SQl
+      sql-show: true
+
+    rules:
+      sharding:
+        tables:
+          t_user:
+            actual-data-nodes: server-user.t_user
+          t_order:
+            key-generate-strategy:
+              # 分布式序列列名称
+              column: id
+              # 分布式序列算法名称
+              key-generator-name: alg_snowflake
+            actual-data-nodes: server-order$->{0..1}.t_order$->{0..1}
+            # 分库策略
+            database-strategy:
+              standard:
+                # 分片算法名称
+                sharding-algorithm-name: alg_inline_userid
+                # 分片列名称
+                sharding-column: user_id
+            # 分表策略
+            table-strategy:
+              standard:
+                # 分片算法名称
+                sharding-algorithm-name: alg_hash_mod
+                # 分片列名称
+                sharding-column: order_no
+          t_order_item:
+            actual-data-nodes: server-order$->{0..1}.t_order_item$->{0..1}
+            # 分库策略
+            database-strategy:
+              standard:
+                # 分片算法名称
+                sharding-algorithm-name: alg_mod
+                # 分片列名称
+                sharding-column: user_id
+            # 分布式序列策略配置
+            key-generate-strategy:
+              # 分布式序列列名称
+              column: id
+              # 分布式序列算法名称
+              key-generator-name: alg_snowflake
+            #  分表策略
+            table-strategy:
+              standard:
+                # 分片算法名称
+                sharding-algorithm-name: alg_hash_mod
+                # 分片列名称
+                sharding-column: order_no
+          #数据节点可不配置，默认情况下，向所有数据源广播
+          t_dict:
+            actual-data-nodes: server-user.t_dict,server-order$->{0..1}.t_dict
+
+        # 分片算法配置
+        sharding-algorithms:
+          # 行表达式分片算法
+          alg_inline_userid:
+            props:
+              # 分片算法属性配置
+              algorithm-expression: server-order$->{user_id % 2}
+            # 分片算法类型
+            type: INLINE
+          alg_mod:
+            props:
+              # 分片算法属性配置
+              sharding-count: 2
+            # 取模分片算法
+            type: MOD
+          alg_hash_mod:
+            props:
+              # 分片算法属性配置
+              sharding-count: 2
+            # 分片算法类型
+            type: HASH_MOD
+        key-generators:
+          # 分布式序列算法配置
+          alg_snowflake:
+            # 分布式序列算法类型
+            type: SNOWFLAKE
+            # 分布式序列算法属性配置
+          #            props:
+        # 绑定表
+        #        binding-tables:
+        #          - t_order,t_order_item
+        # 广播表
+        broadcast-tables:
+          - t_dict
